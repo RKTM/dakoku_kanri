@@ -4,3 +4,9 @@ project/target
 target
 tmp
 .history
+
+#eclipse
+.classpath
+.project
+.cache
+.settings*
