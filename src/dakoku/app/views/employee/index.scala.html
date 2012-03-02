@@ -1,0 +1,23 @@
+@(employees: List[Employee], employeeForm: Form[(String, String)])
+
+@import helper._
+
+@main("Welcome to Play 2.0") {
+
+<table>
+	@employees.map { e =>
+	<tr>
+		<td>@e.employee_cd</td>
+		<td>@e.name</td>
+	</tr>
+	}
+</table>
+@form(action = routes.EmployeeController.createEmployee) {
+
+@inputText(employeeForm("employee_cd"))
+
+@inputText(employeeForm("name"))
+<input type="submit" value="Create">
+}
+
+}
