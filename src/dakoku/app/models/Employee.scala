@@ -38,6 +38,16 @@ object Employee {
     }
   }
 
+   /**
+   * Retrieve employees from the cd.
+   */
+  def findByCd(cd: String): Option[Employee] = {
+    DB.withConnection { implicit connection =>
+      SQL("select * from employee where employee_cd = {cd}").on(
+        'cd -> cd).as(Employee.simple.singleOpt)
+    }
+  }
+  
   /**
    * Retrieve all employees.
    */

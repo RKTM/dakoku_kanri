@@ -1,0 +1,32 @@
+@(dakokuList: List[DakokuSelect], dakokuForm: Form[String])
+
+@import helper._
+
+@main("Welcome to Play 2.0") {
+<table>
+	<thead>
+		<tr>
+			<th>社員コード</th>
+			<th>社員名</th>
+			<th>打刻日時（出勤）</th>
+		</tr>
+	</thead>
+	<tbody>
+		@dakokuList.map { e =>
+		<tr>
+			<td>@e.employee_cd</td>
+			<td>@e.name</td>
+			<td>@e.name</td>
+		</tr>
+		}
+	</tbody>
+</table>
+@form(action = routes.DakokuController.update) {
+
+@inputText(dakokuForm("employee_cd"))
+
+<input type="submit" value="work_start">
+<input type="submit" value="work_end">
+}
+
+} 

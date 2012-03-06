@@ -10,3 +10,7 @@ GET  /assets/*file  controllers.Assets.at(path="/public", file)
 
 GET  /employee/  controllers.EmployeeController.index
 POST  /employee/  controllers.EmployeeController.createEmployee
+
+# Dakoku
+GET  /dakoku/  controllers.DakokuController.index
+POST  /dakoku/  controllers.DakokuController.update
