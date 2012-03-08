@@ -8,10 +8,10 @@ import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
 
-sealed case class Dakoku(id: Pk[Long], employee_id: Long, start_work_at: Date, finish_work_at: Date) 
+sealed case class Dakoku(id: Pk[Long], employee_id: Long, start_work_at: Date, finish_work_at: Option[Date]) 
 
-case class DakokuSelect(id: Pk[Long], employee_id: Long, employee_cd: String, name: String,
-  start_work_at: Date, finish_work_at: Date)
+sealed case class DakokuSelect(id: Pk[Long], employee_id: Long, employee_cd: String, name: String,
+  start_work_at: Date, finish_work_at: Option[Date])
 
 
 object DakokuSelect {
@@ -27,7 +27,7 @@ object DakokuSelect {
       get[String]("employee.employee_cd") ~
       get[String]("employee.name") ~
       get[Date]("dakoku.start_work_at") ~
-      get[Date]("dakoku.finish_work_at") map {
+      get[Option[Date]]("dakoku.finish_work_at") map {
         case id ~ employee_id ~ employee_cd ~ name ~ start_work_at ~ finish_work_at =>
           DakokuSelect(
             id, employee_id, employee_cd, name, start_work_at, finish_work_at)

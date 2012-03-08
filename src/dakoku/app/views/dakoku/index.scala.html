@@ -1,8 +1,17 @@
-@(dakokuList: List[DakokuSelect], dakokuForm: Form[String])
+@(dakokuList: List[DakokuSelect], dakokuForm: Form[(String, String)])(implicit flash: Flash)
 
 @import helper._
 
 @main("Welcome to Play 2.0") {
+
+@form(action = routes.DakokuController.update) {
+
+@dakokuForm.globalError.map { error =>
+                <p class="error">
+                    @error.message
+                </p>
+            }
+
 <table>
 	<thead>
 		<tr>
@@ -16,14 +25,16 @@
 		<tr>
 			<td>@e.employee_cd</td>
 			<td>@e.name</td>
-			<td>@e.name</td>
 		</tr>
 		}
 	</tbody>
 </table>
-@form(action = routes.DakokuController.update) {
+
+
 
 @inputText(dakokuForm("employee_cd"))
+
+@inputText(dakokuForm("dummy"))
 
 <input type="submit" value="work_start">
 <input type="submit" value="work_end">
