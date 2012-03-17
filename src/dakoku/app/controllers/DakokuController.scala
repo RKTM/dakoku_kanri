@@ -30,7 +30,6 @@ object DakokuController extends Controller {
       formWithErrors => BadRequest(views.html.dakoku.index(DakokuSelect.findAll(), formWithErrors)),
       {
         case (employee_cd, _) =>
-          //従業員コードで検索
           val employee = Employee.findByCd(employee_cd)
           employee match {
             case Some(e) => 
