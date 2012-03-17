@@ -8,13 +8,14 @@ import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
 
-sealed case class Dakoku(id: Pk[Long], employee_id: Long, start_work_at: Date, finish_work_at: Option[Date]) 
+sealed case class Dakoku(id: Pk[Long], employee_id: Long, start_work_at: Date, finish_work_at: Option[Date])
 
 sealed case class DakokuSelect(id: Pk[Long], employee_id: Long, employee_cd: String, name: String,
-  start_work_at: Date, finish_work_at: Option[Date])
-
+  start_work_at: Date, start_work_at_display: String, finish_work_at: Option[Date])
 
 object DakokuSelect {
+
+  val smd = new java.text.SimpleDateFormat("yyyy/MM/dd hh:mm")
 
   // -- Parsers
 
@@ -30,7 +31,8 @@ object DakokuSelect {
       get[Option[Date]]("dakoku.finish_work_at") map {
         case id ~ employee_id ~ employee_cd ~ name ~ start_work_at ~ finish_work_at =>
           DakokuSelect(
-            id, employee_id, employee_cd, name, start_work_at, finish_work_at)
+            id, employee_id, employee_cd, name, start_work_at,
+            smd.format(start_work_at), finish_work_at)
       }
   }
 
@@ -60,9 +62,8 @@ object DakokuSelect {
   }
 }
 
-
 object Dakoku {
-  
+
   /**
    * Create a Employee.
    */
