@@ -1,8 +1,8 @@
-@(dakokuList: List[DakokuSelect], dakokuForm: Form[(String, String)])(implicit flash: Flash)
+@(dakokuSelectList: List[DakokuSelect], dakokuForm: Form[(String, String)])(implicit flash: Flash)
 
 @import helper._
 
-@main("Welcome to Play 2.0") {
+@main("出勤") {
 
 @form(action = routes.DakokuController.update) {
 
@@ -12,7 +12,7 @@
                 </p>
             }
 
-<table>
+<table class="table table-bordered table-striped">
 	<thead>
 		<tr>
 			<th>社員コード</th>
@@ -21,10 +21,11 @@
 		</tr>
 	</thead>
 	<tbody>
-		@dakokuList.map { e =>
+		@dakokuSelectList.map { e =>
 		<tr>
 			<td>@e.employee_cd</td>
 			<td>@e.name</td>
+			<td>@e.start_work_at_display</td>
 		</tr>
 		}
 	</tbody>
@@ -37,7 +38,6 @@
 @inputText(dakokuForm("dummy"))
 
 <input type="submit" value="work_start">
-<input type="submit" value="work_end">
 }
 
 } 
