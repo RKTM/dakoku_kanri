@@ -41,20 +41,34 @@ if(Ti.version < 1.8) {
 
 	button.addEventListener('click', function() {
 
-		var url = "http://10.0.2.2:9000/dakoku/"
+		// var url = "http://10.0.2.2:9000/dakoku/start_work_from_mobile"
+		var url = "http://10.0.2.2:9000/dakoku/start_work_from_mobile/"
 
-		// var dakokuUtil = require('dakoku/dakoku');
+		//get current location
+		var location = getCurrentLocation();
+		if(location == null) {
+			return;
+		}
+
+		var lat = location[0];
+		var lon = location[1];
 
 		// prepare the conncetion.
-		// var dakokuClient = dakokuUtil.getHttpClient();
 		var dakokuClient = getHttpClient();
-
 		dakokuClient.open("POST", url);
+		dakokuClient.setTimeout(5);
+		dakokuClient.setRequestHeader("Content-Type", "application/json; charset=utf-8");
 
 		var param = {
-			employee_cd : employee_cd.value,
-			dummy		: ""
-		}
+			"employee_cd" : employee_cd.value,
+			"lat" : lat,
+			"lon" : lon
+		};
+
+		// var param = {
+		// "employee_cd" : employee_cd.value,
+		// "dummy" : ""
+		// }
 
 		//send the request.
 		dakokuClient.send(param);
@@ -66,22 +80,55 @@ if(Ti.version < 1.8) {
 
 function getHttpClient() {
 
-		if(Ti.Network.online = false) {
+	if(Ti.Network.online = false) {
+		return;
+	}
+
+	//HTTPClientオブジェクトの生成
+	return Ti.Network.createHTTPClient({
+		// function called when the response data is available
+		onload : function(e) {
+			Ti.API.info("Received text: " + this.responseText);
+			alert('success');
+		},
+		// function called when an error occurs, including a timeout
+		onerror : function(e) {
+			Ti.API.debug(e.error);
+			alert('error');
+		},
+		timeout : 5000  /* in milliseconds */
+	});
+}
+
+function getCurrentLocation() {
+	Ti.Geolocation.purpose = "to register dakoku geo info.";
+	Ti.Geolocation.preferredProvider = Titanium.Geolocation.PROVIDER_GPS;
+
+	Titanium.Geolocation.addEventListener('location', function(e) {
+		setTimeout(function() {
+			return (e.coords);
+		}, 2);
+	});
+	var lat = "";
+	var lon = "";
+
+	Ti.Geolocation.getCurrentPosition(function(e) {
+
+		if(e.error) {
+			alert("e.error : could not get current location.");
 			return;
 		}
 
-		//HTTPClientオブジェクトの生成
-		return Ti.Network.createHTTPClient({
-			// function called when the response data is available
-			onload : function(e) {
-				Ti.API.info("Received text: " + this.responseText);
-				alert('success');
-			},
-			// function called when an error occurs, including a timeout
-			onerror : function(e) {
-				Ti.API.debug(e.error);
-				alert('error');
-			},
-			timeout : 5000  /* in milliseconds */
-		});
+		if(!e.success) {
+			alert("!e.success : could not get current location. ");
+			return;
+		}
+		lat = e.coords.latitude;
+		lon = e.coords.longitude;
+
+		return;
+	})
+	if(lat != null && lon != null) {
+		return new Array(lat, lon);
 	}
+}
