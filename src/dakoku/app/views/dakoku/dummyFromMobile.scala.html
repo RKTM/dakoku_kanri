@@ -1,0 +1,23 @@
+@(dakokuFormFromMobile: Form[(String, Option[String], Option[String], Option[String])])(implicit flash: Flash)
+
+@import helper._
+
+@main("出勤 From モバイル") {
+
+@form(action = routes.DakokuController.startWorkFromMobile2) {
+
+@dakokuFormFromMobile.globalError.map { error =>
+<p class="error">
+	@error.message
+</p>
+}
+@inputText(dakokuFormFromMobile("employee_cd"))
+<input type="hidden" name="dummy" id ="dummy" >
+
+@inputText(dakokuFormFromMobile("lat"))
+@inputText(dakokuFormFromMobile("lon"))
+
+<input type="submit" value="work_start">
+}
+
+} 

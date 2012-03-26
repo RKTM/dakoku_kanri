@@ -42,7 +42,7 @@ if(Ti.version < 1.8) {
 	button.addEventListener('click', function() {
 
 		// var url = "http://10.0.2.2:9000/dakoku/start_work_from_mobile"
-		var url = "http://10.0.2.2:9000/dakoku/start_work_from_mobile/"
+		var url = "http://10.0.2.2:9000/dakoku/start_work_from_mobile2/"
 
 		//get current location
 		var location = getCurrentLocation();
@@ -56,21 +56,15 @@ if(Ti.version < 1.8) {
 		// prepare the conncetion.
 		var dakokuClient = getHttpClient();
 		dakokuClient.open("POST", url);
-		dakokuClient.setTimeout(5);
-		dakokuClient.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+		dakokuClient.setTimeout(100);
 
 		var param = {
 			"employee_cd" : employee_cd.value,
+			"dummy" : 'dumy',
 			"lat" : lat,
 			"lon" : lon
 		};
 
-		// var param = {
-		// "employee_cd" : employee_cd.value,
-		// "dummy" : ""
-		// }
-
-		//send the request.
 		dakokuClient.send(param);
 
 	});

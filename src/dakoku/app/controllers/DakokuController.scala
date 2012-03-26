@@ -9,6 +9,7 @@ import models.Employee
 import models.Dakoku
 import anorm.NotAssigned
 import java.util.Date
+import java.lang.Double
 import utils.Geo
 import play.api.libs.json.Json
 
@@ -19,6 +20,15 @@ object DakokuController extends Controller {
       "employee_cd" -> nonEmptyText,
       "dummy" -> text) verifying ("Invalid Employee Cd", result => result match {
         case (employee_cd, _) => Employee.findByCd(employee_cd).isDefined
+      }))
+
+  val dakokuFormFromMobile = Form(
+    tuple(
+      "employee_cd" -> nonEmptyText,
+      "dummy" -> optional(text),
+      "lat" -> optional(text),
+      "lon" -> optional(text)) verifying ("Invalid Employee Cd", result => result match {
+        case (employee_cd, _, _, _) => Employee.findByCd(employee_cd).isDefined
       }))
 
   def index = Action { implicit request =>
@@ -42,40 +52,38 @@ object DakokuController extends Controller {
       })
   }
 
-  def startWorkFromMobile = Action(parse.json) { request =>
+  def dummyFromMobile = Action { implicit request =>
+    Ok(views.html.dakoku.dummyFromMobile(dakokuFormFromMobile))
+  }
 
-    Logger.debug("startWorkFromMobile")
+  def startWorkFromMobile2 = Action { implicit request =>
 
-    //      val employee_cd = queryParagetOrElse((("employee_c, -1d")
-    //    val lat = queryParam.gOrElseet("la, -999t")
-    //    val lon = queryParam.gOrElseet("lo, -999n
+    Logger.debug("startWorkFromMobile2")
 
-    val employee_cd = request.body \ "employee_cd"
-    val lat = request.body \ "lat"
-    val lon = request.body \ "lon"
+    val formBound = dakokuFormFromMobile.bindFromRequest
 
-    Logger.debug(employee_cd.toString())
-    Logger.debug(lat.toString())
-    Logger.debug(lon.toString())
+    formBound.fold(
+      formWithErrors => BadRequest,
+      {
+        case (employee_cd, _, lat, lon) =>
 
-    val employee = Employee.findByCd(employee_cd.toString())
+          val employee = Employee.findByCd(employee_cd)
 
-    employee match {
-      case Some(e) =>
-        val createdDakoku = Dakoku.create(Dakoku(id = NotAssigned, employee_id = e.id.get,
-          start_work_at = new Date, finish_work_at = null,
-          start_work_geo = Option(Geo(lat.toString().toDouble, lon.toString.toDouble))))
+          employee match {
+            case Some(e) =>
+              Logger.debug(e.toString())
+              
+              Dakoku.create(Dakoku(id = NotAssigned, employee_id = e.id.get,
+                start_work_at = new Date, finish_work_at = null,
+                start_work_geo =
+                  Some(Geo(Double.parseDouble(lat.getOrElse("0")), Double.parseDouble(lon.getOrElse("0"))))))
+              Redirect(routes.DakokuController.index)
 
-        Ok(Json.toJson(
-          Map("status" -> "OK",
-            "start_work_at" -> createdDakoku.start_work_at.toString())))
-
-      case None =>
-        NotFound(Json.toJson(
-          Map("status" -> "Not Found",
-            "start_work_at" -> "")))
-    }
-
+            case None =>
+              Logger.debug("NONE!")
+              NotFound("NO_DATA")
+          }
+      })
   }
 
 }
